@@ -1,0 +1,7 @@
+{
+  "name": "devdacticPurchase",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
