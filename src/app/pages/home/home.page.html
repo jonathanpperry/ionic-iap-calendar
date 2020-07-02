@@ -1,0 +1,35 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Budgeting App
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <calendar
+    [eventSource]="eventSource"
+    [calendarMode]="calendar.mode"
+    [currentDate]="calendar.currentDate"
+    (onEventSelected)="onEventSelected($event)"
+    (onTitleChanged)="onViewTitleChanged($event)"
+    startHour="6"
+    endHour="20"
+    step="30"
+    startingDayWeek="1"
+    [monthviewDisplayEventTemplate]="template"
+  >
+  </calendar>
+
+  <ng-template #template let-view="view" let-row="row" let-col="col">
+    <div [class.with-event]="view.dates[row*7+col].events.length">
+      {{view.dates[row*7+col].label}}
+      <div class="indicator-container">
+        <div
+          class="event-indicator"
+          *ngFor="let e of view.dates[row*7+col].events"
+        ></div>
+      </div>
+    </div>
+  </ng-template>
+</ion-content>
