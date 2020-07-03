@@ -37,6 +37,7 @@ export class HomePage implements OnInit {
   gems = 0;
   isPro = false;
   products: IAPProduct[] = [];
+  currentMonth;
   constructor(
     private plt: Platform,
     private alertController: AlertController,
@@ -53,7 +54,10 @@ export class HomePage implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    var d = new Date();
+    this.currentMonth = d.getMonth();
+  }
 
   async openCalModal() {
     const modal = await this.modalCtrl.create({
@@ -88,6 +92,12 @@ export class HomePage implements OnInit {
         this.myCal.loadEvents();
       }
     });
+  }
+
+  goToCurrentTime() {
+    this.myCal.currentDate = new Date(
+      this.myCal.currentDate.setMonth(this.currentMonth)
+    );
   }
 
   // Change current month/week/day
