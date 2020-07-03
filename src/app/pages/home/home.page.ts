@@ -1,35 +1,35 @@
 import {
   InAppPurchase2,
-  IAPProduct
-} from '@ionic-native/in-app-purchase-2/ngx';
-import { CalendarComponent } from 'ionic2-calendar';
+  IAPProduct,
+} from "@ionic-native/in-app-purchase-2/ngx";
+import { CalendarComponent } from "ionic2-calendar";
 import {
   Component,
   ViewChild,
   OnInit,
   Inject,
   LOCALE_ID,
-  ChangeDetectorRef
-} from '@angular/core';
-import { AlertController, ModalController, Platform } from '@ionic/angular';
-import { formatDate } from '@angular/common';
-import { CalModalPage } from '../cal-modal/cal-modal.page';
+  ChangeDetectorRef,
+} from "@angular/core";
+import { AlertController, ModalController, Platform } from "@ionic/angular";
+import { formatDate } from "@angular/common";
+import { CalModalPage } from "../cal-modal/cal-modal.page";
 
-const PRODUCT_GEMS_KEY = 'devgems100';
-const PRODUCT_PRO_KEY = 'devpro';
+const PRODUCT_GEMS_KEY = "devgems100";
+const PRODUCT_PRO_KEY = "devpro";
 
 @Component({
-  selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss']
+  selector: "app-home",
+  templateUrl: "home.page.html",
+  styleUrls: ["home.page.scss"],
 })
 export class HomePage implements OnInit {
   eventSource = [];
   viewTitle: string;
 
   calendar = {
-    mode: 'month',
-    currentDate: new Date()
+    mode: "month",
+    currentDate: new Date(),
   };
 
   @ViewChild(CalendarComponent) myCal: CalendarComponent;
@@ -55,6 +55,41 @@ export class HomePage implements OnInit {
 
   ngOnInit() {}
 
+  async openCalModal() {
+    const modal = await this.modalCtrl.create({
+      component: CalModalPage,
+      cssClass: "cal-modal",
+      backdropDismiss: false,
+    });
+
+    await modal.present();
+
+    modal.onDidDismiss().then((result) => {
+      if (result.data && result.data.event) {
+        let event = result.data.event;
+        if (event.allDay) {
+          let start = event.startTime;
+          event.startTime = new Date(
+            Date.UTC(
+              start.getUTCFullYear(),
+              start.getUTCMonth(),
+              start.getUTCDate()
+            )
+          );
+          event.endTime = new Date(
+            Date.UTC(
+              start.getUTCFullYear(),
+              start.getUTCMonth(),
+              start.getUTCDate() + 1
+            )
+          );
+        }
+        this.eventSource.push(result.data.event);
+        this.myCal.loadEvents();
+      }
+    });
+  }
+
   // Change current month/week/day
   next() {
     this.myCal.slideNext();
@@ -72,14 +107,14 @@ export class HomePage implements OnInit {
   // Calendar event was clicked
   async onEventSelected(event) {
     // Use Angular date pipe for conversion
-    let start = formatDate(event.startTime, 'medium', this.locale);
-    let end = formatDate(event.endTime, 'medium', this.locale);
+    let start = formatDate(event.startTime, "medium", this.locale);
+    let end = formatDate(event.endTime, "medium", this.locale);
 
     const alert = await this.alertController.create({
       header: event.title,
       subHeader: event.desc,
-      message: 'From: ' + start + '<br><br>To: ' + end,
-      buttons: ['OK']
+      message: "From: " + start + "<br><br>To: " + end,
+      buttons: ["OK"],
     });
     alert.present();
   }
@@ -112,10 +147,10 @@ export class HomePage implements OnInit {
           )
         );
         events.push({
-          title: 'All Day - ' + i,
+          title: "All Day - " + i,
           startTime: startTime,
           endTime: endTime,
-          allDay: true
+          allDay: true,
         });
       } else {
         var startMinute = Math.floor(Math.random() * 24 * 60);
@@ -135,10 +170,10 @@ export class HomePage implements OnInit {
           date.getMinutes() + endMinute
         );
         events.push({
-          title: 'Event - ' + i,
+          title: "Event - " + i,
           startTime: startTime,
           endTime: endTime,
-          allDay: false
+          allDay: false,
         });
       }
     }
@@ -152,19 +187,19 @@ export class HomePage implements OnInit {
   registerProducts() {
     this.store.register({
       id: PRODUCT_GEMS_KEY,
-      type: this.store.CONSUMABLE
+      type: this.store.CONSUMABLE,
     });
 
     this.store.register({
       id: PRODUCT_PRO_KEY,
-      type: this.store.NON_CONSUMABLE
+      type: this.store.NON_CONSUMABLE,
     });
 
     this.store.refresh();
   }
 
   setupListeners() {
-    this.store.when('product').approved((p: IAPProduct) => {
+    this.store.when("product").approved((p: IAPProduct) => {
       if (p.id === PRODUCT_PRO_KEY) {
         this.isPro = true;
       } else if (p.id === PRODUCT_GEMS_KEY) {
@@ -178,7 +213,7 @@ export class HomePage implements OnInit {
     const alert = await this.alertController.create({
       header,
       message,
-      buttons: ['OK']
+      buttons: ["OK"],
     });
 
     await alert.present();
