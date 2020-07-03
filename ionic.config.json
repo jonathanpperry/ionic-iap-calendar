@@ -1,7 +1,8 @@
 {
   "name": "devdacticPurchase",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {},
+    "cordova": {}
   },
   "type": "angular"
 }
